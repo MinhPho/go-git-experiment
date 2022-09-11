@@ -8,6 +8,20 @@ import (
 	git2go "github.com/libgit2/git2go/v28"
 	"github.com/spf13/viper"
 )
+import "os/exec"
+
+func commitExist(repoDir, commitId string) bool {
+	cmd := exec.Command("git", "rev-list", fmt.Sprintf("HEAD..%s", viper.GetString("branch")))
+	cmd.Dir = repoDir
+
+	if err := cmd.Run(); err != nil {
+		if _, ok := err.(*exec.ExitError); ok {
+			// Git exit code 128
+			return false
+		}
+	}
+	return true
+}
 
 func main() {
 	viper.SetConfigName("config")
@@ -47,6 +61,17 @@ func main() {
 	// fmt.Println(commit)
 	// repo.CheckoutIndex()
 
+	// TODO: differenciate between branch and commit
+	if commitExist(dir, viper.GetString("branch")) {
+		// Poor man solution to checkout to specific commit id :(
+		cmd := exec.Command("git", "checkout", viper.GetString("branch"))
+		cmd.Dir = dir
+		err = cmd.Run()
+		if err != nil {
+			panic(err)
+		}
+	}
 }
 
 // Evaluation: Work, but checking out commit is not straight forward + require additional package as dependency (libgit2-dev)
+// and gcc, pkg-config

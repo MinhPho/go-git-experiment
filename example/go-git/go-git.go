@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/spf13/viper"
 )
 
@@ -23,7 +24,7 @@ func main() {
 	options := &git.CloneOptions{
 		URL:           viper.GetString("url"),
 		Depth:         1,
-		ReferenceName: "refs/heads/main",
+		ReferenceName: plumbing.ReferenceName(viper.GetString("branch")),
 		SingleBranch:  true,
 		Tags:          git.NoTags,
 	}
