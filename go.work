@@ -2,3 +2,4 @@ go 1.19
 
 use ./example/go-git/
 use ./example/git2go/
+use ./example/git-module/
